@@ -1,22 +1,32 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Address } from './address.entity';
 
 @Entity()
 export class Custumer extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'integer' })
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   email: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   password: string;
 
-  @Column()
-  age: number;
+  @Column({ type: 'integer', nullable: true })
+  age?: number;
 
-  @Column()
-  cpf: string;
+  @Column({ type: 'varchar', nullable: true })
+  cpf?: string;
+
+  @ManyToOne(() => Address, (address) => address.id)
+  address_id: Address[];
 }
