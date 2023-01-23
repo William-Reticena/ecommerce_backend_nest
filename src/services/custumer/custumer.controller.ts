@@ -1,6 +1,6 @@
-import { CustumerService } from './custumer.service';
-import { AddressDto } from './dto/address.dto';
 import { Body, Controller, Get, Post, Param, Patch } from '@nestjs/common';
+import { CustumerService } from './custumer.service';
+import { AddressDto } from '../../dto/address.dto';
 
 @Controller()
 export class CustumerController {

@@ -1,12 +1,11 @@
-import { Address } from '../custumer/address.entity';
-import { Custumer } from '../custumer/custumer.entity';
+import { Custumer } from '../../entities/custumer.entity';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Custumer, Address])],
+  imports: [TypeOrmModule.forFeature([Custumer])],
   controllers: [AuthController],
   providers: [AuthService],
 })
