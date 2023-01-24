@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Custumer } from '../../entities/custumer.entity';
 import { AuthCredentialsDto } from '../../dto/auth-credentials.dto';
-import { UserDto } from '../../dto/user.dto';
+import { CustumerDto } from '../../dto/custumer.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
     return bcrypt.hashSync(password, salt);
   }
 
-  async create(userDto: UserDto): Promise<UserDto> {
+  async create(userDto: CustumerDto): Promise<CustumerDto> {
     const user = this.custumer.create(userDto);
 
     user.password = this.encriptPassword(user.password);
