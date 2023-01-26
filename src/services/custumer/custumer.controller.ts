@@ -1,6 +1,16 @@
+import { AuthInterceptor } from './../../interceptors/AuthInterceptor';
 import { ResponseDTO } from './../../dto/response.dto';
 import { AddressPatchDto } from './../../dto/address.dto';
-import { Body, Controller, Get, Post, Param, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Param,
+  Patch,
+  Req,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CustumerService } from './custumer.service';
 import { AddressDto } from '../../dto/address.dto';
 
@@ -14,6 +24,7 @@ export class CustumerController {
   }
 
   @Get(':custumer_id')
+  @UseInterceptors(AuthInterceptor)
   async getAddressesByCustomerId(
     @Param('custumer_id') id: number,
   ): Promise<ResponseDTO<AddressDto[]>> {
