@@ -1,13 +1,7 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Custumer } from './custumer.entity';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Customer } from './customer.entity';
 
-@Entity()
+@Entity('address')
 export class Address extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'integer' })
   id: number;
@@ -24,7 +18,7 @@ export class Address extends BaseEntity {
   @Column({ type: 'varchar' })
   neighborhood: string;
 
-  @Column({ type: 'boolean', nullable: true })
+  @Column({ type: 'boolean', default: false })
   primary_address?: boolean;
 
   @Column({ type: 'varchar' })
@@ -36,6 +30,6 @@ export class Address extends BaseEntity {
   @Column({ type: 'varchar' })
   zip_code: string;
 
-  @ManyToOne(() => Custumer, (custumer) => custumer.addresses)
-  custumer: Custumer;
+  @ManyToOne(() => Customer, (customer) => customer.addresses)
+  customer: Customer;
 }

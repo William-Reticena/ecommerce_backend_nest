@@ -2,47 +2,48 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Custumer } from '../../entities/custumer.entity';
+import { Customer } from '../../entities/customer.entity';
 import { AuthCredentialsDto } from '../../dto/auth-credentials.dto';
-import { CustumerDto } from '../../dto/custumer.dto';
+import { CustomerDto } from '../../dto/customer.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Custumer)
-    private custumer: Repository<Custumer>,
+    @InjectRepository(Customer)
+    private customer: Repository<Customer>,
     private readonly jwtService: JwtService,
   ) {}
 
-  generateToken(user: string) {
+  private generateToken(user: string) {
     return this.jwtService.sign({ user }, { expiresIn: '1d' });
   }
 
-  encriptPassword(password: string): string {
+  async encriptPassword(password: string): Promise<string> {
     const salt = 10;
-    return bcrypt.hashSync(password, salt);
+    return await bcrypt.hash(password, salt);
   }
 
-  async create(userDto: CustumerDto): Promise<CustumerDto> {
-    const user = this.custumer.create(userDto);
+  async create(userDto: CustomerDto): Promise<CustomerDto> {
+    const user = this.customer.create(userDto);
 
-    user.password = this.encriptPassword(user.password);
+    const hash = await this.encriptPassword(user.password);
+    user.password = hash;
 
-    await this.custumer.save(user);
+    await this.customer.save(user);
 
     return user;
   }
 
-  async login(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+  async login(authCredentialsDto: AuthCredentialsDto): Promise<{ token: string }> {
     const { email, password } = authCredentialsDto;
 
-    const user = await this.custumer.findOne({ where: { email } });
+    const user = await this.customer.findOne({ where: { email } });
 
-    if (!user && !bcrypt.compareSync(password, user.password)) {
+    if (!user && !(await bcrypt.compare(password, user.password))) {
       return null;
     }
 
-    return this.generateToken(user.name);
+    return { token: this.generateToken(user.name) };
   }
 }

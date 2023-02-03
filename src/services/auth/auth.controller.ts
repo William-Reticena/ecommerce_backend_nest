@@ -1,19 +1,25 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, HttpStatus, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from '../../dto/auth-credentials.dto';
-import { CustumerDto } from '../../dto/custumer.dto';
+import { CustomerDto } from '../../dto/customer.dto';
+import { ResponseDTO } from '../../dto/response.dto';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  create(@Body() userDto: CustumerDto): Promise<CustumerDto> {
-    return this.authService.create(userDto);
+  async create(@Body() userDto: CustomerDto): Promise<ResponseDTO> {
+    const result = await this.authService.create(userDto);
+
+    return new ResponseDTO(result, 'User created successfully', 'Usuário criado com sucesso', HttpStatus.CREATED);
   }
 
   @Post('login')
-  login(@Body() authCredentialsDto: AuthCredentialsDto): Promise<string> {
-    return this.authService.login(authCredentialsDto);
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() authCredentialsDto: AuthCredentialsDto): Promise<ResponseDTO> {
+    const result = await this.authService.login(authCredentialsDto);
+
+    return new ResponseDTO(result, 'Login successful', 'Logado com sucesso', HttpStatus.OK);
   }
 }

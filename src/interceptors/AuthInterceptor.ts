@@ -1,25 +1,24 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
-import { AuthService } from './../services/auth/auth.service';
-import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  HttpStatus,
+  Inject,
+  NestInterceptor,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 export class AuthInterceptor implements NestInterceptor {
-  constructor(
-    private readonly authService: Repository<AuthService>,
-    private jwtService: JwtService,
-  ) {}
+  constructor(@Inject(JwtService) private jwtService: JwtService) {}
 
-  private validateToken(token: string) {
-    console.log('validateToken', token);
-
-    // const decoded = this.jwtService.decode(token);
-    console.log(this.jwtService.decode(token));
-
-    // console.log(decoded);
-
-    return 'decoded';
+  private validateToken(token: string): boolean {
+    try {
+      this.jwtService.verify(token);
+    } catch (error) {
+      return false;
+    }
+    return true;
   }
 
   async intercept(
@@ -29,12 +28,25 @@ export class AuthInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
-    console.log(authHeader);
+    if (!authHeader) {
+      throw new UnauthorizedException({
+        message: 'Token not provided',
+        statusCode: HttpStatus.UNAUTHORIZED,
+        userMessage: 'Token não fornecido',
+      });
+    }
 
     if (authHeader && authHeader.split(' ')[0] === 'Bearer') {
       const token = authHeader.split(' ')[1];
-      const user = this.validateToken(token);
-      request.user = user;
+      const isValid = this.validateToken(token);
+
+      if (!isValid) {
+        throw new UnauthorizedException({
+          message: 'Invalid token',
+          statusCode: HttpStatus.UNAUTHORIZED,
+          userMessage: 'Token inválido',
+        });
+      }
     }
 
     return next.handle();

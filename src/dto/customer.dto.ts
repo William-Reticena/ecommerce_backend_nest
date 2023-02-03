@@ -1,12 +1,6 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CustumerDto {
+export class CustomerDto {
   @IsNumber()
   @IsOptional()
   age?: number;
