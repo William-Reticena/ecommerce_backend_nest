@@ -18,6 +18,6 @@ export class CreditCard extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   primary_card: boolean;
 
-  @ManyToOne(() => Customer, (customer) => customer.creditCards)
+  @ManyToOne(() => Customer)
   customer: Customer;
 }

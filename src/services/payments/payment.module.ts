@@ -1,3 +1,4 @@
+import { Customer } from './../../entities/customer.entity';
 import { CreditCard } from './../../entities/creditCard.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PaymentService } from '../payments/payment.service';
@@ -6,7 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CreditCard]), JwtModule.register({ secret: 'secret' })],
+  imports: [TypeOrmModule.forFeature([CreditCard, Customer]), JwtModule.register({ secret: 'secret' })],
   controllers: [PaymentController],
   providers: [PaymentService],
 })
